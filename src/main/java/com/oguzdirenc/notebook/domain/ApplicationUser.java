@@ -22,16 +22,27 @@ public class ApplicationUser {
     @GeneratedValue(strategy = GenerationStrategy.UNIQUE)
     private UUID applicationUserId;
 
-    @NotBlank(message = "Kullanıcı adı boş bırakılamaz")
-    @Email(message = "Kullanıcı adı e-mail adresi olmalıdır")
+    @NotBlank(message = "Username cannot be blank")
+    @Email(message = "Username must be an e-mail")
     private String username;
 
-    @NotBlank(message = "Lütfen adınızı giriniz ")
+    @NotBlank(message = "Fullname cannot be blank")
     private String fullName;
 
-    @NotBlank(message = "Şifre alanı boş bırakılamaz")
+    @NotBlank(message = "Password field cannot be blank")
     private String password;
 
     @Transient
     private String confirmPassword;
+
+    public ApplicationUser() {
+    }
+
+    public ApplicationUser(UUID applicationUserId, String username, String fullName,String password, String confirmPassword) {
+        this.applicationUserId = applicationUserId;
+        this.username = username;
+        this.fullName = fullName;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+    }
 }
