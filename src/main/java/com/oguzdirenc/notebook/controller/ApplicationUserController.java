@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @CrossOrigin
 public class ApplicationUserController {
 
@@ -23,5 +25,9 @@ public class ApplicationUserController {
         return new ResponseEntity<>(applicationUserService.saveApplicationUser(applicationUser), HttpStatus.CREATED);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<ApplicationUser>> getAllUsers(){
+        return new ResponseEntity<>(applicationUserService.getAllUsers(),HttpStatus.OK);
+    }
 
 }

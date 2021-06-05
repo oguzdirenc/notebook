@@ -4,6 +4,8 @@ import com.oguzdirenc.notebook.domain.ApplicationUser;
 import com.oguzdirenc.notebook.repositories.ApplicationUserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ApplicationUserServiceImpl implements ApplicationUserService {
 
@@ -16,5 +18,10 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
     @Override
     public ApplicationUser saveApplicationUser(ApplicationUser user) {
         return applicationUserRepository.save(user);
+    }
+
+    @Override
+    public List<ApplicationUser> getAllUsers() {
+        return applicationUserRepository.findAll();
     }
 }
