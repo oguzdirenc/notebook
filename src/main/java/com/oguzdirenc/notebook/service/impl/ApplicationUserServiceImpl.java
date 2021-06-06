@@ -1,6 +1,7 @@
 package com.oguzdirenc.notebook.service.impl;
 
 import com.oguzdirenc.notebook.domain.ApplicationUser;
+import com.oguzdirenc.notebook.exception.NotFoundException;
 import com.oguzdirenc.notebook.repositories.ApplicationUserRepository;
 import com.oguzdirenc.notebook.service.ApplicationUserService;
 import org.springframework.stereotype.Service;
@@ -24,19 +25,51 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
         return applicationUserRepository.save(user);
     }
 
-    @Override
-    public List<ApplicationUser> getAllUsers() {
-        return applicationUserRepository.findAll();
-    }
 
     @Override
-    public List<UUID> getIdListForUsernames(List<String> usernames) {
-        List<UUID> userIdList = new ArrayList<>();
+    public List<ApplicationUser> getAllUsers() {
+        return (List<ApplicationUser>) applicationUserRepository.findAll();
+    }
+
+    //1           *
+    @Override
+    public List<String> getIdListForUsernames(List<String> usernames) {
+
+        //2   *
+        List<String> userIdList = new ArrayList<>();
 
         for(String username : usernames){
             Optional<ApplicationUser> user = applicationUserRepository.findByUsername(username);
-            user.ifPresent((userFound)-> userIdList.add(userFound.getApplicationUserId()));
+            user.ifPresent(applicationUser -> userIdList.add(applicationUser.getApplicationUserId()));
         }
         return userIdList;
+    }
+
+    //3          *
+    @Override
+    public List<String> getTodoIdListForUsername(String username) {
+        ApplicationUser user = getUserByUsername(username);
+        return user.getTodoIdList();
+    }
+
+    @Override
+    public ApplicationUser getUserByUsername(String username){
+        Optional<ApplicationUser> user = applicationUserRepository.findByUsername(username);
+        if (user.isPresent())return user.get();
+        else throw new NotFoundException("User not found");
+    }
+
+    //2                                               *
+    public List<String> getUsernameListByIdList(List<String> userIdList){
+        List<String> usernameList = new ArrayList<>();
+
+        //2   *
+        for(String userId: userIdList){
+            Optional<ApplicationUser> user = applicationUserRepository.findById(userId);
+            if(user.isPresent()){
+            String username = user.get().getUsername();
+            usernameList.add(username);
+        }}
+        return usernameList;
     }
 }
