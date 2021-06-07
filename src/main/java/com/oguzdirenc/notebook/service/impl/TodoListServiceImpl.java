@@ -31,11 +31,9 @@ public class TodoListServiceImpl implements TodoListService {
     @Override
     public TodoList saveTodoList(TodoListSaveRequest todoListSaveRequest,String username) {
 
-        //todo todolist Id user icerisine eklenecek
-
-        //    *
         List<String> todoUserIdList = applicationUserService.getIdListForUsernames(todoListSaveRequest.getUsernameList());
         ApplicationUser user = applicationUserService.getUserByUsername(username);
+        todoUserIdList.add(user.getApplicationUserId());
         TodoList todoList = TodoList.builder()
                 .todoListName(todoListSaveRequest.getTodoListName())
                 .todoListDescription(todoListSaveRequest.getTodoListDescription())
@@ -43,8 +41,7 @@ public class TodoListServiceImpl implements TodoListService {
                 .build();
 
         TodoList savedTodoList =todoListRepository.save(todoList);
-        user.getTodoIdList().add(savedTodoList.getTodoListId());
-        applicationUserService.saveApplicationUser(user);
+        applicationUserService.setUserTodoIdList(todoUserIdList,savedTodoList.getTodoListId());
         return savedTodoList;
     }
 
@@ -61,6 +58,7 @@ public class TodoListServiceImpl implements TodoListService {
             Optional<TodoList> todo = todoListRepository.findById(todoId);
             if(todo.isPresent()){
                 UserTodoListResponse userTodoListResponse= UserTodoListResponse.builder()
+                        .todoListId(todo.get().getTodoListId())
                         .todoListHeader(todo.get().getTodoListName())
                         .todoListDescription(todo.get().getTodoListDescription())
                         .listItemCount(1)

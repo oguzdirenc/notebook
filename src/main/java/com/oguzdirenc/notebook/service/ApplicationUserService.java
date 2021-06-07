@@ -8,11 +8,12 @@ import java.util.UUID;
 public interface ApplicationUserService {
     ApplicationUser saveApplicationUser(ApplicationUser user);
     List<ApplicationUser> getAllUsers();
-    //1    *
     List<String> getIdListForUsernames(List<String> usernames);
-    //2    *
     List<String> getTodoIdListForUsername(String username);
     ApplicationUser getUserByUsername(String username);
-    //3                                         *
     List<String> getUsernameListByIdList(List<String> userIdList);
+    ApplicationUser getUserByUserId(String userId);
+
+
+    void setUserTodoIdList(List<String> userIdList,String todoId);
 }

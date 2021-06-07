@@ -31,13 +31,12 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
         return (List<ApplicationUser>) applicationUserRepository.findAll();
     }
 
-    //1           *
+
     @Override
     public List<String> getIdListForUsernames(List<String> usernames) {
 
-        //2   *
-        List<String> userIdList = new ArrayList<>();
 
+        List<String> userIdList = new ArrayList<>();
         for(String username : usernames){
             Optional<ApplicationUser> user = applicationUserRepository.findByUsername(username);
             user.ifPresent(applicationUser -> userIdList.add(applicationUser.getApplicationUserId()));
@@ -45,7 +44,7 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
         return userIdList;
     }
 
-    //3          *
+
     @Override
     public List<String> getTodoIdListForUsername(String username) {
         ApplicationUser user = getUserByUsername(username);
@@ -59,11 +58,18 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
         else throw new NotFoundException("User not found");
     }
 
-    //2                                               *
+    @Override
+    public ApplicationUser getUserByUserId(String userId){
+        Optional<ApplicationUser> user = applicationUserRepository.findById(userId);
+        if(user.isPresent()) return user.get();
+        else throw new NotFoundException("User not found");
+    }
+
+    @Override
     public List<String> getUsernameListByIdList(List<String> userIdList){
         List<String> usernameList = new ArrayList<>();
 
-        //2   *
+
         for(String userId: userIdList){
             Optional<ApplicationUser> user = applicationUserRepository.findById(userId);
             if(user.isPresent()){
@@ -71,5 +77,17 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
             usernameList.add(username);
         }}
         return usernameList;
+    }
+
+    @Override
+    public void setUserTodoIdList(List<String> usernameIdList, String todoId) {
+        List<ApplicationUser> userList = new ArrayList<>();
+        for(String userId : usernameIdList){
+            userList.add(getUserByUserId(userId));
+        }
+        for(ApplicationUser user : userList){
+            user.getTodoIdList().add(todoId);
+            applicationUserRepository.save(user);
+        }
     }
 }
