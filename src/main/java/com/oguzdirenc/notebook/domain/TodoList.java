@@ -10,9 +10,7 @@ import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
 import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
 
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -33,16 +31,23 @@ public class TodoList {
     @Field
     private String todoListDescription;
 
-    //2
     @Field
-    private List<String> userIdList =new ArrayList<>();
+    private Set<String> userIdList =new HashSet<>();
 
+    @Field
+    private Set<String> itemIdList =new HashSet<>();
 
-    public TodoList(String todoListId,String todoListName, String todoListDescription, List<String> userIdList) {
+    public TodoList(String todoListId,
+                    String todoListName,
+                    String todoListDescription,
+                    Set<String> userIdList,
+                    Set<String> itemIdList) {
+
         this.todoListId = todoListId;
         this.todoListName = todoListName;
         this.todoListDescription = todoListDescription;
         this.userIdList = userIdList;
+        this.itemIdList = itemIdList;
     }
 
     public TodoList() {

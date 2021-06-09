@@ -11,9 +11,9 @@ import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 
 
 @Document
@@ -42,14 +42,19 @@ public class ApplicationUser {
     @Transient
     private String confirmPassword;
 
-    //2
+
     @Field
-    private List<String> TodoIdList = new ArrayList<>();
+    private Set<String> TodoIdList = new HashSet<>();
 
     public ApplicationUser() {
     }
 
-    public ApplicationUser(String applicationUserId,String username,String fullName,String password, String confirmPassword, List<String> todoIdList) {
+    public ApplicationUser(String applicationUserId,
+                           String username,
+                           String fullName,
+                           String password,
+                           String confirmPassword,
+                           Set<String> todoIdList) {
         this.applicationUserId = applicationUserId;
         this.username = username;
         this.fullName = fullName;
