@@ -2,6 +2,7 @@ package com.oguzdirenc.notebook.service.impl;
 
 import com.oguzdirenc.notebook.domain.ApplicationUser;
 import com.oguzdirenc.notebook.domain.TodoList;
+import com.oguzdirenc.notebook.exception.NotFoundException;
 import com.oguzdirenc.notebook.repositories.TodoListRepository;
 import com.oguzdirenc.notebook.request.TodoListSaveRequest;
 import com.oguzdirenc.notebook.response.UserTodoListResponse;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class TodoListServiceImpl implements TodoListService {
@@ -30,7 +32,7 @@ public class TodoListServiceImpl implements TodoListService {
     @Override
     public TodoList saveTodoList(TodoListSaveRequest todoListSaveRequest,String username) {
 
-        List<String> todoUserIdList = applicationUserService.getIdListForUsernames(todoListSaveRequest.getUsernameList());
+        Set<String> todoUserIdList = applicationUserService.getIdListForUsernames(todoListSaveRequest.getUsernameList());
         ApplicationUser user = applicationUserService.getUserByUsername(username);
         todoUserIdList.add(user.getApplicationUserId());
         TodoList todoList = TodoList.builder()
@@ -49,7 +51,7 @@ public class TodoListServiceImpl implements TodoListService {
     @Override
     public List<UserTodoListResponse> getUserLists(String username) {
         //     *
-        List<String> todoIdList = applicationUserService.getTodoIdListForUsername(username);
+        Set<String> todoIdList = applicationUserService.getTodoIdListForUsername(username);
         List<UserTodoListResponse> userTodoListResponseList = new ArrayList<>();
 
         //    *
@@ -69,5 +71,12 @@ public class TodoListServiceImpl implements TodoListService {
         }
 
         return userTodoListResponseList;
+    }
+
+    @Override
+    public TodoList getTodoListByID(String todoListId) {
+        Optional<TodoList> todoList= todoListRepository.findById(todoListId);
+        if(todoList.isEmpty()) throw new NotFoundException("Todo list not found");
+        return todoList.get();
     }
 }

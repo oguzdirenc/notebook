@@ -6,10 +6,7 @@ import com.oguzdirenc.notebook.repositories.ApplicationUserRepository;
 import com.oguzdirenc.notebook.service.ApplicationUserService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ApplicationUserServiceImpl implements ApplicationUserService {
@@ -33,10 +30,9 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
 
 
     @Override
-    public List<String> getIdListForUsernames(List<String> usernames) {
+    public Set<String> getIdListForUsernames(List<String> usernames) {
 
-
-        List<String> userIdList = new ArrayList<>();
+        Set<String> userIdList = new HashSet<>();
         for(String username : usernames){
             Optional<ApplicationUser> user = applicationUserRepository.findByUsername(username);
             user.ifPresent(applicationUser -> userIdList.add(applicationUser.getApplicationUserId()));
@@ -46,7 +42,7 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
 
 
     @Override
-    public List<String> getTodoIdListForUsername(String username) {
+    public Set<String> getTodoIdListForUsername(String username) {
         ApplicationUser user = getUserByUsername(username);
         return user.getTodoIdList();
     }
@@ -66,8 +62,8 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
     }
 
     @Override
-    public List<String> getUsernameListByIdList(List<String> userIdList){
-        List<String> usernameList = new ArrayList<>();
+    public Set<String> getUsernameListByIdList(Set<String> userIdList){
+        Set<String> usernameList = new HashSet<>();
 
 
         for(String userId: userIdList){
@@ -80,8 +76,8 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
     }
 
     @Override
-    public void setUserTodoIdList(List<String> usernameIdList, String todoId) {
-        List<ApplicationUser> userList = new ArrayList<>();
+    public void setUserTodoIdList(Set<String> usernameIdList, String todoId) {
+        Set<ApplicationUser> userList = new HashSet<>();
         for(String userId : usernameIdList){
             userList.add(getUserByUserId(userId));
         }

@@ -11,7 +11,6 @@ public class ItemSaveRequest {
 
     @NotBlank(message = "Item description cannot be blank")
     private String itemDescription;
-
     private String todoListId;
 
     public ItemSaveRequest() {

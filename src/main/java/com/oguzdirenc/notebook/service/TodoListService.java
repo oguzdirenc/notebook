@@ -10,4 +10,5 @@ public interface TodoListService {
 
     TodoList saveTodoList(TodoListSaveRequest todoListSaveRequest,String username);
     List<UserTodoListResponse> getUserLists(String username);
+    TodoList getTodoListByID(String todoListId);
 }
