@@ -11,6 +11,6 @@ Create a bucket called notebook
 Add a user to couchbase server with the following credentials
 username:"oguzdirenc" password:"abc123"
 
-##Run
+# Run
 
 Pull the all java code from github and run
