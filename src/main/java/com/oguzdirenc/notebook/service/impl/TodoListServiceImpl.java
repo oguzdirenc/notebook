@@ -7,6 +7,7 @@ import com.oguzdirenc.notebook.repositories.TodoListRepository;
 import com.oguzdirenc.notebook.request.TodoListSaveRequest;
 import com.oguzdirenc.notebook.response.UserTodoListResponse;
 import com.oguzdirenc.notebook.service.ApplicationUserService;
+import com.oguzdirenc.notebook.service.ItemService;
 import com.oguzdirenc.notebook.service.TodoListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class TodoListServiceImpl implements TodoListService {
 
     private final TodoListRepository todoListRepository;
     private final ApplicationUserService applicationUserService;
+
 
     @Autowired
     public TodoListServiceImpl(TodoListRepository todoListRepository, ApplicationUserService applicationUserService) {
@@ -83,8 +85,8 @@ public class TodoListServiceImpl implements TodoListService {
     public void updatedTodoListSave(TodoList todoList) {
         todoListRepository.save(todoList);
     }
-/*
-    @Override
+
+  /*  @Override
     public String deleteTodoList(String todoListId) {
         TodoList todoList = getTodoListByID(todoListId);
         Set<String> userIdList = todoList.getUserIdList();

@@ -30,7 +30,7 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
             newUser.setConfirmPassword("");
             return applicationUserRepository.save(newUser);
         }catch (Exception err) {
-            throw new UsernameAlreadyExistsException("Kullanıcı adı '" + newUser.getUsername() + "' zaten kayıtlı");
+            throw new UsernameAlreadyExistsException("Username '" + newUser.getUsername() + "' already registered ");
         }
     }
 
@@ -58,7 +58,7 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
     @Override
     public ApplicationUser getUserByUsername(String username){
        ApplicationUser user = applicationUserRepository.findByUsername(username);
-        if (user != null)return user;
+        if (Objects.nonNull(user))return user;
         else throw new NotFoundException("User not found");
     }
 
@@ -95,11 +95,12 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
         }
     }
 
-   /* @Override
+  /*  @Override
     public void deleteTodoListFromUser(String userId,String todoListId) {
         ApplicationUser user = getUserByUserId(userId);
         user.setTodoIdList( user.getTodoIdList().stream()
                 .filter(savedTodoId-> !savedTodoId.equals(todoListId))
                 .collect(Collectors.toSet()));
+        applicationUserRepository.save(user);
     }*/
 }

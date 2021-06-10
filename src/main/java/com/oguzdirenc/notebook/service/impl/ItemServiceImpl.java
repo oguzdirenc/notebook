@@ -25,11 +25,14 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final TodoListService todoListService;
 
+
+
     @Autowired
     public ItemServiceImpl(ItemRepository itemRepository, TodoListService todoListService) {
         this.itemRepository = itemRepository;
         this.todoListService = todoListService;
     }
+
 
     @Override
     public Item saveItem(ItemSaveRequest itemSaveRequest) {
@@ -80,7 +83,7 @@ public class ItemServiceImpl implements ItemService {
     public String deleteItem(String itemId) {
 
         Optional<Item> deletedItem = itemRepository.findById(itemId);
-        if(deletedItem.isEmpty()) throw new NotFoundException("Item not found");
+        if(deletedItem.isEmpty()) return itemId;
 
         String todoListId = deletedItem.get().getTodoListId();
         itemRepository.delete(deletedItem.get());

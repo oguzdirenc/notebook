@@ -1,5 +1,6 @@
 package com.oguzdirenc.notebook.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -21,8 +22,9 @@ import java.util.*;
 @Document
 @Setter
 @Getter
+@Builder
 public class ApplicationUser implements UserDetails {
-//1
+
     @Id
     @GeneratedValue(strategy = GenerationStrategy.UNIQUE)
     @Field
