@@ -22,7 +22,6 @@ public class TodoListServiceImpl implements TodoListService {
     private final TodoListRepository todoListRepository;
     private final ApplicationUserService applicationUserService;
 
-
     @Autowired
     public TodoListServiceImpl(TodoListRepository todoListRepository, ApplicationUserService applicationUserService) {
         this.todoListRepository = todoListRepository;
@@ -46,23 +45,23 @@ public class TodoListServiceImpl implements TodoListService {
         return savedTodoList;
     }
 
-    //todo kullaniciya göre özellestir
-    //todo itemCount alanini guncelle
+
+
     @Override
     public List<UserTodoListResponse> getUserLists(String username) {
-        //     *
+
         Set<String> todoIdList = applicationUserService.getTodoIdListForUsername(username);
         List<UserTodoListResponse> userTodoListResponseList = new ArrayList<>();
 
-        //    *
-        for(String todoId :todoIdList){
+
+     for(String todoId :todoIdList){
             Optional<TodoList> todo = todoListRepository.findById(todoId);
             if(todo.isPresent()){
                 UserTodoListResponse userTodoListResponse= UserTodoListResponse.builder()
                         .todoListId(todo.get().getTodoListId())
                         .todoListHeader(todo.get().getTodoListName())
                         .todoListDescription(todo.get().getTodoListDescription())
-                        .listItemCount(1)
+                        .listItemCount(todo.get().getItemIdList().size())
                         .usernameList(applicationUserService.getUsernameListByIdList(todo.get().getUserIdList()))
                         .build();
                 userTodoListResponseList.add(userTodoListResponse);
@@ -79,4 +78,21 @@ public class TodoListServiceImpl implements TodoListService {
         if(todoList.isEmpty()) throw new NotFoundException("Todo list not found");
         return todoList.get();
     }
+
+    @Override
+    public void updatedTodoListSave(TodoList todoList) {
+        todoListRepository.save(todoList);
+    }
+/*
+    @Override
+    public String deleteTodoList(String todoListId) {
+        TodoList todoList = getTodoListByID(todoListId);
+        Set<String> userIdList = todoList.getUserIdList();
+        Set<String> itemIdList = todoList.getItemIdList();
+
+        itemIdList.forEach(itemService::deleteItem);
+        userIdList.forEach(userId-> applicationUserService.deleteTodoListFromUser(userId,todoListId));
+
+        return null;
+    }*/
 }

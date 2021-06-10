@@ -10,19 +10,18 @@ import org.springframework.data.couchbase.core.mapping.Document;
 import org.springframework.data.couchbase.core.mapping.Field;
 import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
 import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Document
 @Setter
 @Getter
-public class ApplicationUser {
+public class ApplicationUser implements UserDetails {
 //1
     @Id
     @GeneratedValue(strategy = GenerationStrategy.UNIQUE)
@@ -62,7 +61,15 @@ public class ApplicationUser {
     public ApplicationUser() {
     }
 
-    public ApplicationUser(String applicationUserId, @NotBlank(message = "Username cannot be blank") @Email(message = "Username must be an e-mail") String username, @NotBlank(message = "Fullname cannot be blank") String fullName, @NotBlank(message = "Password field cannot be blank") String password, String confirmPassword, Set<String> todoIdList, Long createdAt, Long updatedAt) {
+    public ApplicationUser(String applicationUserId,
+                           String fullName,
+                           String username,
+                           String password,
+                           String confirmPassword,
+                           Set<String> todoIdList,
+                           Long createdAt,
+                           Long updatedAt) {
+
         this.applicationUserId = applicationUserId;
         this.username = username;
         this.fullName = fullName;
@@ -71,5 +78,30 @@ public class ApplicationUser {
         TodoIdList = todoIdList;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

@@ -3,10 +3,8 @@ package com.oguzdirenc.notebook.service.impl;
 import com.oguzdirenc.notebook.domain.Item;
 import com.oguzdirenc.notebook.domain.TodoList;
 import com.oguzdirenc.notebook.enums.ItemStatus;
-import com.oguzdirenc.notebook.exception.IdNullException;
 import com.oguzdirenc.notebook.exception.NotFoundException;
 import com.oguzdirenc.notebook.repositories.ItemRepository;
-import com.oguzdirenc.notebook.repositories.TodoListRepository;
 import com.oguzdirenc.notebook.request.ItemSaveRequest;
 import com.oguzdirenc.notebook.request.TodoListItemsRequest;
 import com.oguzdirenc.notebook.service.ItemService;
@@ -25,21 +23,18 @@ public class ItemServiceImpl implements ItemService {
 
 
     private final ItemRepository itemRepository;
-    private final TodoListRepository todoListRepository;
     private final TodoListService todoListService;
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, TodoListRepository todoListRepository, TodoListService todoListService) {
+    public ItemServiceImpl(ItemRepository itemRepository, TodoListService todoListService) {
         this.itemRepository = itemRepository;
-        this.todoListRepository = todoListRepository;
         this.todoListService = todoListService;
     }
 
     @Override
     public Item saveItem(ItemSaveRequest itemSaveRequest) {
 
-        Optional<TodoList> todoList = todoListRepository.findById(itemSaveRequest.getTodoListId());
-        if(todoList.isEmpty()) throw new NotFoundException("Todo list not found");
+       TodoList todoList = todoListService.getTodoListByID(itemSaveRequest.getTodoListId());
 
         Item newItem = Item.builder()
                 .itemDescription(itemSaveRequest.getItemDescription())
@@ -49,8 +44,8 @@ public class ItemServiceImpl implements ItemService {
 
         Item savedItem = itemRepository.save(newItem);
 
-        todoList.get().getItemIdList().add(savedItem.getItemId());
-        todoListRepository.save(todoList.get());
+        todoList.getItemIdList().add(savedItem.getItemId());
+        todoListService.updatedTodoListSave(todoList);
 
         return savedItem;
     }
@@ -95,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
                 .filter(id -> !id.equals(itemId))
                 .collect(Collectors.toSet());
         todoList.setItemIdList(newItemIdList);
-        todoListRepository.save(todoList);
+        todoListService.updatedTodoListSave(todoList);
         return itemId;
     }
 

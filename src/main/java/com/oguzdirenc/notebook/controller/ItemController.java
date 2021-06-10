@@ -1,7 +1,6 @@
 package com.oguzdirenc.notebook.controller;
 
 import com.oguzdirenc.notebook.domain.Item;
-import com.oguzdirenc.notebook.exception.IdNullException;
 import com.oguzdirenc.notebook.request.ItemSaveRequest;
 import com.oguzdirenc.notebook.request.TodoListItemsRequest;
 import com.oguzdirenc.notebook.service.ItemService;
@@ -35,5 +34,10 @@ public class ItemController {
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteItem(@RequestParam(name = "itemId") String itemId){
         return new ResponseEntity<>(itemService.deleteItem(itemId),HttpStatus.OK);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<Item> updateItem(@RequestBody Item item){
+        return new ResponseEntity<>(itemService.updateItem(item),HttpStatus.OK);
     }
 }

@@ -2,8 +2,11 @@ package com.oguzdirenc.notebook.service.impl;
 
 import com.oguzdirenc.notebook.domain.ApplicationUser;
 import com.oguzdirenc.notebook.exception.NotFoundException;
+import com.oguzdirenc.notebook.exception.UsernameAlreadyExistsException;
 import com.oguzdirenc.notebook.repositories.ApplicationUserRepository;
 import com.oguzdirenc.notebook.service.ApplicationUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,21 +15,25 @@ import java.util.*;
 public class ApplicationUserServiceImpl implements ApplicationUserService {
 
     private final ApplicationUserRepository applicationUserRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public ApplicationUserServiceImpl(ApplicationUserRepository applicationUserRepository) {
+    @Autowired
+    public ApplicationUserServiceImpl(ApplicationUserRepository applicationUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.applicationUserRepository = applicationUserRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
-    public ApplicationUser saveApplicationUser(ApplicationUser user) {
-        return applicationUserRepository.save(user);
+    public ApplicationUser saveUser(ApplicationUser newUser) {
+        try {
+            newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
+            newUser.setConfirmPassword("");
+            return applicationUserRepository.save(newUser);
+        }catch (Exception err) {
+            throw new UsernameAlreadyExistsException("Kullanıcı adı '" + newUser.getUsername() + "' zaten kayıtlı");
+        }
     }
 
-
-    @Override
-    public List<ApplicationUser> getAllUsers() {
-        return (List<ApplicationUser>) applicationUserRepository.findAll();
-    }
 
 
     @Override
@@ -34,8 +41,9 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
 
         Set<String> userIdList = new HashSet<>();
         for(String username : usernames){
-            Optional<ApplicationUser> user = applicationUserRepository.findByUsername(username);
-            user.ifPresent(applicationUser -> userIdList.add(applicationUser.getApplicationUserId()));
+            ApplicationUser user = applicationUserRepository.findByUsername(username);
+            if(user != null){userIdList.add(user.getApplicationUserId());}
+
         }
         return userIdList;
     }
@@ -49,8 +57,8 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
 
     @Override
     public ApplicationUser getUserByUsername(String username){
-        Optional<ApplicationUser> user = applicationUserRepository.findByUsername(username);
-        if (user.isPresent())return user.get();
+       ApplicationUser user = applicationUserRepository.findByUsername(username);
+        if (user != null)return user;
         else throw new NotFoundException("User not found");
     }
 
@@ -86,4 +94,12 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
             applicationUserRepository.save(user);
         }
     }
+
+   /* @Override
+    public void deleteTodoListFromUser(String userId,String todoListId) {
+        ApplicationUser user = getUserByUserId(userId);
+        user.setTodoIdList( user.getTodoIdList().stream()
+                .filter(savedTodoId-> !savedTodoId.equals(todoListId))
+                .collect(Collectors.toSet()));
+    }*/
 }

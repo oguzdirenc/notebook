@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -25,12 +26,14 @@ public class TodoListController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<TodoList> saveTodoList(@Valid @RequestBody TodoListSaveRequest todoListSaveRequest){
-        return new ResponseEntity<>(todoListService.saveTodoList(todoListSaveRequest,"third@first.com"), HttpStatus.CREATED);
+    public ResponseEntity<TodoList> saveTodoList(@Valid @RequestBody TodoListSaveRequest todoListSaveRequest, Principal principal){
+        return new ResponseEntity<>(todoListService.saveTodoList(todoListSaveRequest, principal.getName()), HttpStatus.CREATED);
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<UserTodoListResponse>> getUserTodoLists(){
-        return new ResponseEntity<>(todoListService.getUserLists("third@first.com"),HttpStatus.OK);
+    public ResponseEntity<List<UserTodoListResponse>> getUserTodoLists(Principal principal){
+        return new ResponseEntity<>(todoListService.getUserLists(principal.getName()),HttpStatus.OK);
     }
+
+
 }
